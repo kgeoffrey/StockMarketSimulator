@@ -77,12 +77,13 @@ app.layout = html.Div(
                               ),
                      html.Div(className='eight columns div-for-charts bg-grey',
                               children=[
-                                  dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True),
-                                  dcc.Graph(id='bar', config={'displayModeBar': False}, animate=True)
+                                  dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False),
+                                  dcc.Graph(id='bar', config={'displayModeBar': False}, animate=False,
+                                            style={'height': '40%'})
                               ]
                               ),
-                     html.Div(id = "data_timeseries", style={"display": "none"}),
-                     html.Div(id = "data_bar", style={"display": "none"})
+                     html.Div(id="data_timeseries", style={"display": "none"}),
+                     html.Div(id="data_bar", style={"display": "none"})
                  ]
                  )
     ]
@@ -111,7 +112,8 @@ def simulate_data(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_
                      )
     sim.start()
 
-    return sim.market_prices_df.to_json(), sim.market_prices_df.to_json()
+    return sim.market_prices_df.to_json(), sim.pnl_df.to_json()
+
 
 """
 @app.callback(Output('timeseries', 'figure'),
@@ -167,7 +169,7 @@ def update_graph(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_m
 )
 def update_graph(data):
     data = list((pd.read_json(data))[0])
-    print(data)
+    # print(data)
 
     layout = go.Layout(
         title="Simulated Prices",
@@ -192,6 +194,7 @@ def update_graph(data):
     return figure
 
 
+"""
 @app.callback(Output('bar', 'figure'),
               [Input('data_bar', "children")])
 def update_bar(data):
@@ -217,6 +220,50 @@ def update_bar(data):
         data=go.Scatter(x=[i for i in range(len(data))], y=data),
         layout=layout
     )
+
+    return figure
+"""
+
+
+@app.callback(Output('bar', 'figure'),
+              [Input('data_bar', "children")])
+def update_bar(data):
+    data = pd.read_json(data)
+
+    print(data)
+    fundamentalists = data[data['Trader'].str.contains("fundamentalist")]
+    chartists = data[data['Trader'].str.contains("chartist")]
+    xs = ["Fundamentalists", "Chartists"]
+
+    layout = go.Layout(
+        title="Profits",
+        plot_bgcolor="#FFF",  # Sets background color to white
+        xaxis=dict(
+            title="Traders",
+            # linecolor="#BCCCDC",  # Sets color of X-axis line
+            showgrid=False, # Removes X-axis grid lines
+            showticklabels = False
+        ),
+        yaxis=dict(
+            title="PnL",
+            # linecolor="#BCCCDC",  # Sets color of Y-axis line
+            showgrid=False,  # Removes Y-axis grid lines
+        )
+    )
+
+    bars = [
+        go.Bar(name = "Fundamentalists", x=list(fundamentalists["Trader"]), y=list(fundamentalists["PNL"]),
+               text=list(fundamentalists["PNL"])),
+        go.Bar(name = "Chartist", x=list(chartists["Trader"]), y=list(chartists["PNL"]),
+               text=list(chartists["PNL"]))
+    ]
+
+    figure = go.Figure(
+        data=bars,  # [go.Bar(x=list(data["Trader"]), y=list(data["PNL"]))],
+        layout=layout
+    )
+
+    #figure.update_layout(barmode="group", bargroupgap = 0.1, bargap = 0.05) #texttposition='outside',
 
     return figure
 
