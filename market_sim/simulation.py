@@ -1,6 +1,7 @@
 
 from .markets import Market
 import numpy as np
+import pandas as pd
 from .traders import *
 
 
@@ -19,6 +20,9 @@ class Simulation(object):
         
         self.market = Market(self.fund_dist[0])
         self.market_prices = []
+        
+        self.market_prices_df = None
+        self.pnl_df = None
     
     def initialize_fundamentalists(self, num_):
         fundamentalists = {}
@@ -54,6 +58,8 @@ class Simulation(object):
                 self.process_matches(self.market.matches) # assign matches
                 price = self.market.market_price # update the market price 
                 self.market_prices.append(price)
+        
+        self.create_dfs()
     
     def process_matches(self, matches_):
         if not matches_:
@@ -69,3 +75,11 @@ class Simulation(object):
             self.market.push(trader_.order)
         else:
             return
+    
+    def create_dfs(self):
+        pnls = {}
+        for name in list(self.traders.keys()):
+            pnls[name] = self.traders[name].portfolio.pnl.get_total_pnl()
+        self.pnl_df = pd.DataFrame(pnls.items(), columns=['Trader', 'PNL'])
+        self.market_prices_df = pd.DataFrame(self.market_prices)
+

@@ -9,7 +9,6 @@ import pandas as pd
 
 # Initialise the app
 app = dash.Dash(__name__)
-
 server = app.server
 
 # Define the app
@@ -82,6 +81,8 @@ app.layout = html.Div(
                                   dcc.Graph(id='bar', config={'displayModeBar': False}, animate=True)
                               ]
                               ),
+                     html.Div(id = "data_timeseries", style={"display": "none"}),
+                     html.Div(id = "data_bar", style={"display": "none"})
                  ]
                  )
     ]
@@ -89,13 +90,30 @@ app.layout = html.Div(
 
 
 @app.callback(
-    Output("number-out", "children"),
-    [Input("length", "value"), Input("f_dist_mean", "value"), Input("c_dist_var", "value")],
+    [Output("data_timeseries", "children"),
+     Output("data_bar", "children")],
+    [Input("submit-val", "n_clicks")],
+    [State('length', 'value'),
+     State('n_fund', 'value'),
+     State('n_chart', 'value'),
+     State('f_dist_mean', 'value'),
+     State('f_dist_var', 'value'),
+     State('c_dist_mean', 'value'),
+     State('c_dist_var', 'value'),
+     ]
 )
-def number_render(fval, tval, rangeval):
-    return "dfalse: {}, dtrue: {}, range: {}".format(fval, tval, rangeval)
+def simulate_data(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_mean, c_dist_var):
+    sim = Simulation(length,
+                     n_fund,
+                     n_chart,
+                     (f_dist_mean, f_dist_var),
+                     (c_dist_mean, c_dist_var)
+                     )
+    sim.start()
 
+    return sim.market_prices_df.to_json(), sim.market_prices_df.to_json()
 
+"""
 @app.callback(Output('timeseries', 'figure'),
               [Input('submit-val', "n_clicks")],
               [State('length', 'value'),
@@ -108,8 +126,6 @@ def number_render(fval, tval, rangeval):
                ]
               )
 def update_graph(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_mean, c_dist_var):
-    #global data
-
     print(n_fund)
     sim = Simulation(length,
                      n_fund,
@@ -119,10 +135,7 @@ def update_graph(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_m
                      )
 
     sim.start()
-    data = sim.market_prices
-    update_bar(data)
-
-
+    data_table = sim.market_prices
 
     layout = go.Layout(
         title="Simulated Prices",
@@ -144,11 +157,46 @@ def update_graph(val, length, n_fund, n_chart, f_dist_mean, f_dist_var, c_dist_m
         layout=layout
     )
 
+    return figure, data_table
+"""
+
+
+@app.callback(
+    Output('timeseries', 'figure'),
+    [Input('data_timeseries', "children")],
+)
+def update_graph(data):
+    data = list((pd.read_json(data))[0])
+    print(data)
+
+    layout = go.Layout(
+        title="Simulated Prices",
+        plot_bgcolor="#FFF",  # Sets background color to white
+        xaxis=dict(
+            title="Price Evolution",
+            linecolor="#BCCCDC",  # Sets color of X-axis line
+            showgrid=False  # Removes X-axis grid lines
+        ),
+        yaxis=dict(
+            title="Prices",
+            linecolor="#BCCCDC",  # Sets color of Y-axis line
+            showgrid=False,  # Removes Y-axis grid lines
+        )
+    )
+
+    figure = go.Figure(
+        data=go.Scatter(x=[i for i in range(len(data))], y=data),
+        layout=layout
+    )
+
     return figure
 
 
-#@app.callback(Output('bar', 'figure'),[Input('submit-val', "n_clicks")])
+@app.callback(Output('bar', 'figure'),
+              [Input('data_bar', "children")])
 def update_bar(data):
+    data = list((pd.read_json(data))[0])
+    print(data)
 
     layout = go.Layout(
         title="Profits",
