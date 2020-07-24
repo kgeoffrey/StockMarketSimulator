@@ -264,6 +264,7 @@ a:hover {
 /* Forms –––––––––––––––––––––––––––––––––––––––––––––––––– */
 input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {
   height: 38px;
+  width: 200px;
   padding-left: 12px;
  /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: #fff;

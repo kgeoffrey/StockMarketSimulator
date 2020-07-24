@@ -26,22 +26,23 @@ app.layout = html.Div(
                                          + "in orders in each period (if their wealth goes to zero they cannot submit orders). "
                                          + "Fundamentalists submit Limit Orders and Chartists submit Market Orders. "
                                          + "The Valuations for Fundamentalists and the time windows for the momentum indicator "
-                                         + "for Chartists are drawn from a normal distribution (set mean and variance below)."
+                                         + "for Chartists are drawn from a normal distribution. "
+                                         + "Try it out with the default values below or set your own."
                                          ),
 
                                   html.H2('Configure Fundamentalists:'),
                                   html.Div(
                                       [
                                           dcc.Input(
-                                              id="n_fund", type="number",
+                                              id="n_fund", type="number", value=10,
                                               debounce=True, placeholder="Number of Traders",
                                           ),
                                           dcc.Input(
-                                              id="f_dist_mean", type="number",
-                                              debounce=True, placeholder="Mean Value (try: 100)",
+                                              id="f_dist_mean", type="number", value=100,
+                                              debounce=True, placeholder="Mean Valuation",
                                           ),
                                           dcc.Input(
-                                              id="f_dist_var", type="number",
+                                              id="f_dist_var", type="number", value=3,
                                               debounce=True, placeholder="Variance of Values",
                                           ),
                                       ]
@@ -50,15 +51,15 @@ app.layout = html.Div(
                                   html.Div(
                                       [
                                           dcc.Input(
-                                              id="n_chart", type="number",
+                                              id="n_chart", type="number", value=3,
                                               debounce=True, placeholder="Number of Traders",
                                           ),
                                           dcc.Input(
-                                              id="c_dist_mean", type="number",
+                                              id="c_dist_mean", type="number", value=6,
                                               debounce=True, placeholder="Mean Window Length",
                                           ),
                                           dcc.Input(
-                                              id="c_dist_var", type="number",
+                                              id="c_dist_var", type="number", value=2,
                                               debounce=True, placeholder="Variance of window",
                                           ),
                                       ]
@@ -67,7 +68,7 @@ app.layout = html.Div(
                                   html.Div(
                                       [
                                           dcc.Input(
-                                              id="length", type="number",
+                                              id="length", type="number", value=10,
                                               debounce=True, placeholder="Length of Simulation",
                                           ),
                                       ]
@@ -173,14 +174,14 @@ def update_bar(data):
         plot_bgcolor="#FFF",
         xaxis=dict(
             title="Traders",
-            #linecolor="#BCCCDC",  # Sets color of X-axis line
-            showgrid=False, # Removes X-axis grid lines
+            #linecolor="#BCCCDC",
+            showgrid=False,
             showticklabels=False
         ),
         yaxis=dict(
             title="PnL",
-            # linecolor="#BCCCDC",  # Sets color of Y-axis line
-            showgrid=False,  # Removes Y-axis grid lines
+            linecolor="#BCCCDC",
+            showgrid=False,
         )
     )
 
