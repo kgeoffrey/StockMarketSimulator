@@ -34,7 +34,7 @@ app.layout = html.Div(
                                   html.Div(
                                       [
                                           dcc.Input(
-                                              id="n_fund", type="number", value=10,
+                                              id="n_fund", type="number", value=30,
                                               debounce=True, placeholder="Number of Traders",
                                           ),
                                           dcc.Input(
@@ -51,7 +51,7 @@ app.layout = html.Div(
                                   html.Div(
                                       [
                                           dcc.Input(
-                                              id="n_chart", type="number", value=3,
+                                              id="n_chart", type="number", value=5,
                                               debounce=True, placeholder="Number of Traders",
                                           ),
                                           dcc.Input(
@@ -84,11 +84,15 @@ app.layout = html.Div(
                               ),
                      html.Div(className='eight columns div-for-charts bg-grey',
                               children=[
-                                  dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=False),
+                                  dcc.Graph(id='timeseries',
+                                            config={'displayModeBar': False},
+                                            animate=True,
+                                            style={'height': '50%'},
+                                            ),
                                   dcc.Graph(id='bar',
                                             config={'displayModeBar': False},
-                                            animate=False,
-                                            style={'height': '40%'},
+                                            animate=True,
+                                            style={'height': '50%'},
                                             )
                               ]
                               ),
@@ -139,11 +143,13 @@ def update_graph(data):
         title="Simulated Prices",
         plot_bgcolor="#FFF",
         xaxis=dict(
+            range=[0, len(data)],
             title="Price Evolution",
             linecolor="#BCCCDC",
             showgrid=False
         ),
         yaxis=dict(
+            range=[min(data), max(data)],
             title="Prices",
             linecolor="#BCCCDC",
             showgrid=False,
@@ -173,12 +179,14 @@ def update_bar(data):
         title="Total Profits (Unrealized + Realized)",
         plot_bgcolor="#FFF",
         xaxis=dict(
+            range=[0, len(data)],
             title="Traders",
             #linecolor="#BCCCDC",
             showgrid=False,
             showticklabels=False
         ),
         yaxis=dict(
+            range=[data["PNL"].min(), data["PNL"].max()],
             title="PnL",
             linecolor="#BCCCDC",
             showgrid=False,
