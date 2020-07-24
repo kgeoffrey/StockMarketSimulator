@@ -1,19 +1,4 @@
-/* Table of contents ––––––––––––––––––––––––––––––––––––––––––––––––––
 Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
-- Grid
-- Base Styles
- - Typography
- - Links
- - Buttons
- - Forms
- - Lists
- - Code
- - Tables
- - Spacing
- - Utilities
- - Clearing
- - Media Queries
- - Custom App CSS */
 
 
 /* Grid –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -167,8 +152,8 @@ h2 {
   font-size: 3.6rem;
   line-height: 1.25;
   letter-spacing: -.1rem;
-  margin-bottom: 1.8rem;
-  margin-top: 1.8rem;
+  margin-bottom: 1.2rem;
+  margin-top: 1.2rem;
 }
 h3 {
   font-size: 3.0rem;
@@ -244,7 +229,8 @@ a:hover {
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
   display: inline-block;
   height: 38px;
-  padding: 0 30px;
+  width: 400px;
+  padding: 0 30 px;
   color: #555;
   text-align: center;
   font-size: 11px;
@@ -278,7 +264,7 @@ a:hover {
 /* Forms –––––––––––––––––––––––––––––––––––––––––––––––––– */
 input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {
   height: 38px;
-  padding: 6px 10px;
+  padding-left: 12px;
  /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: #fff;
   border: 1px solid #D1D1D1;
@@ -287,6 +273,7 @@ input[type="email"], input[type="number"], input[type="search"], input[type="tex
   box-sizing: border-box;
   font-family: inherit;
   font-size: inherit;
+
  /*https://stackoverflow.com/questions/6080413/why-doesnt-input-inherit-the-font-from-body*/
 }
 /* Removes awkward default styles on some inputs for iOS */
@@ -355,7 +342,7 @@ th:last-child, td:last-child {
 }
 /* Spacing –––––––––––––––––––––––––––––––––––––––––––––––––– */
 button, .button {
-  margin-bottom: 0rem;
+  margin-bottom: 0.75rem;
 }
 input, textarea, select, fieldset {
   margin-bottom: 0rem;
@@ -419,7 +406,7 @@ html, body{
 }
 
 body {
-  background-color: #1E1E1E;
+  background-color: DarkSlateGray;
   color: #d8d8d8;
   height: 100%;
   margin: 0;
@@ -430,20 +417,27 @@ body {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5 {
-  font-family: "Open Sans Semi Bold";
+h1, h3, h4, h5 {
+  font-family: "Arial";
   letter-spacing: 2.1px;
   font-size: 21px;
+  padding-left: 12px;
+}
+h2 {
+  font-family: "Arial";
+  font-weight: 300;
+  font-size: 14px;
   padding-left: 12px;
 }
 p {
   font-family: "Open Sans Light";
   font-weight: 400;
-  font-size: 13px;
-  padding-left: 12px;
+  font-size: 12px;
+  <padding-left: 12px>;
 }
 a {
   text-decoration: none;
+  font-family: "Arial";
 }
 .bg-grey{
   background-color: #31302F;
@@ -517,58 +511,8 @@ a {
   font-size: 14px;
 }
 
-.Input.DateInput_1 {
-  background-color: #1e1e1e;
-}
-
-#date {
-  background-color: #1e1e1e;
-  font-family: "Open Sans Light";
-  font-weight: 400;
-  color: #dbdbdb;
-  border: 0.5px solid #dbdbdb44;
-}
-
-#date-picker{
-  width: 100%;
-}
-
 ._dash-undo-redo {
   display: none;
-}
-
-.DateInput.DateInput_1{
-  width: 100%;
-}
-
-.SingleDatePickerInput__withBorder{
-  border:none;
-}
-
-.DateInput.DateInput_1 {
-  background-color: #1e1e1e;
-}
-
-.SingleDatePickerInput__withBorder {
-  border-radius: 3px;
-  color: #dbdbdb;
-  background: #1e1e1e;
-  background-color: #1e1e1e;
-}
-
-.SingleDatePickerInput.SingleDatePickerInput_1.SingleDatePickerInput__withBorder.SingleDatePickerInput__withBorder_2 {
-  border: 0.0px solid #dbdbdb;
-  display: block;
-}
-
-.SingleDatePicker_1 {
-  border: 0.0px solid #dbdbdb;
-  display: block;
-}
-
-.SingleDatePicker_picker, .SingleDatePicker_picker_1, .SingleDatePicker_picker__directionLeft,
-.SingleDatePicker_picker__directionLeft_2{
-  filter:invert(100%);
 }
 
 /* For Mobile Phones and small screens ––––––––––––––––––––––––––––––––––––––––––––––––––*/

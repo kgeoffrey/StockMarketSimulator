@@ -86,8 +86,12 @@ class PnL:
         updates the weighted exit price
         :return:
         """
-        self._exit = (self._old_exit_amount + self._quantity * self._market_price) / (
+        if self._old_exit_quantity + self._quantity == 0:
+            self._exit = 0
+        else:
+            self._exit = (self._old_exit_amount + self._quantity * self._market_price) / (
                     self._old_exit_quantity + self._quantity)
+
         self._old_exit_amount += self._quantity * self._market_price
         self._old_exit_quantity += self._quantity
 

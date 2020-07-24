@@ -51,7 +51,7 @@ class OrderBook(object):
         elif self.order.order_type == "market":
             self.process_market_order()
         else:
-            raise Excpetion("Unknown Order Type")
+            raise Exception("Unknown Order Type")
         #self.book_keeping()
         
     def get_market_price(self):
@@ -68,7 +68,7 @@ class OrderBook(object):
             self.initialize("bid")
             self.add_to_bid_book()
         else:
-            raise Excpetion("Order cannot be zero")
+            raise Exception("Order cannot be zero")
         
     def add_to_ask_book(self):
             
@@ -136,7 +136,7 @@ class OrderBook(object):
             
     def update_bid_order(self, strike_, ask_quantity_):
         
-        if self.bid_book[strike_]['number_orders'] == 0:
+        if not self.bid_book[strike_]['orders'] or (self.bid_book[strike_]['number_orders'] == 0):
             self.remove_bid_order_price(strike_)
             return ask_quantity_
         
@@ -213,7 +213,7 @@ class OrderBook(object):
     def update_ask_order(self, strike_, bid_quantity_):
         print(self.ask_book)
         print(strike_)
-        if self.ask_book[strike_]['number_orders'] == 0:
+        if not self.ask_book[strike_]['orders'] or self.ask_book[strike_]['size'] == 0:
             self.remove_ask_order_price(strike_)
             return bid_quantity_
         
@@ -281,13 +281,23 @@ class OrderBook(object):
         self.book_keeping()
         if self.order.quantity > 0.0:
             self.order.quantity = abs(self.order.quantity)
-            self.match_market_ask()
+
+            if not self.bid_book_prices:
+                print("WHAT")
+                return
+            else:
+                self.match_market_ask()
 
         elif self.order.quantity < 0.0:
             self.order.quantity = abs(self.order.quantity)
-            self.match_market_bid()
+
+            if not self.ask_book_prices:
+                print("WHAT")
+                return
+            else:
+                self.match_market_bid()
         else:
-            raise Excpetion("Order cannot be zero")
+            raise Exception("Order cannot be zero")
 
     def get_bid_size(self):
         self.bid_size = 0
@@ -298,7 +308,6 @@ class OrderBook(object):
         self.ask_size = 0
         for key, value in self.ask_book.items():
             self.ask_size += value["size"]
-
 
     def match_market_ask(self):
 
@@ -355,7 +364,8 @@ class OrderBook(object):
         self.get_ask_size()
         
 #############################################
-                
+
+
 class Market(object):
     
     def __init__(self, initial_market_price_):
