@@ -1,4 +1,4 @@
-# StockMarketSimulation
+# StockMarketSimulator
 
 
 Agent-based simulation of a stock market with chartists and fundamentalist. Fundamentalists submit limit orders according to their valuation and Chartists submit Market Orders based on a Momentum Indicator.
