@@ -10,6 +10,7 @@ import pandas as pd
 # Initialise the app
 app = dash.Dash(__name__)
 server = app.server
+app.title = "StockMarketSimulator"
 
 # Define the app
 app.layout = html.Div(
