@@ -214,15 +214,15 @@ a:hover {
 
 
 .main-svg{
-  font-family: "Open Sans Semi Bold"
+  font-family: "Arial"
 }
 
 .gtitle{
-  font-family: "Open Sans Semi Bold" !important
+  font-family: "Arial" !important
 }
 
 .g-title{
-  font-family: "Open Sans Semi Bold"
+  font-family: "Arial"
 }
 
 
@@ -431,7 +431,7 @@ h2 {
   padding-left: 12px;
 }
 p {
-  font-family: "Open Sans Light";
+  font-family: "Arial";
   font-weight: 400;
   font-size: 12px;
   <padding-left: 12px>;
