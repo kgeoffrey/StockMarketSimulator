@@ -272,7 +272,7 @@ input[type="email"], input[type="number"], input[type="search"], input[type="tex
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
-  font-family: inherit;
+  font-family: "Arial";
   font-size: inherit;
 
  /*https://stackoverflow.com/questions/6080413/why-doesnt-input-inherit-the-font-from-body*/
