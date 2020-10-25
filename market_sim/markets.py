@@ -15,13 +15,13 @@ class Order:
             return order_type_
     
     def _check_limit_price(self, limit_price_):
-        if (limit_price_ == None) and (self.order_type == "limit"):
+        if (limit_price_ is None) and (self.order_type == "limit"):
             raise Exception("Limit Price cannot be None for Limit Orders")
-        elif (limit_price_ != None) and (self.order_type == "limit"):
+        elif (limit_price_ is not None) and (self.order_type == "limit"):
             return limit_price_
         
 
-class OrderBook(object):
+class OrderBook:
     
     def __init__(self):
         self.bid_book = {}

@@ -7,19 +7,15 @@ class PnL:
     need to keep track of when every product was bought/sold.
     If the class is used to track some sort of derivative, the PV should be used instead of the market price!
     """
+
     def __init__(self):
         self._quantity = 0.0
         self._market_price = 0.0
         self.theoretical_ = 0.0
+        self.realized_pnl = 0.0
+        self.unrealized_pnl = 0.0
 
-        self._realized = 0.0
-        self._unrealized = 0.0
-        self._enter = 0.0
-        self._exit = 0.0
-        self._old_enter_amount = 0.0
-        self._old_enter_quantity = 0.0
-        self._old_exit_amount = 0.0
-        self._old_exit_quantity = 0.0
+        self._avg_open_price = 0.0
         self._total_quantity = 0.0
 
     def push(self, price_, quantity_):
@@ -31,6 +27,7 @@ class PnL:
         """
         self._market_price = price_
         self._quantity = quantity_
+
         self.__update()
 
     def __update(self):
@@ -38,8 +35,8 @@ class PnL:
         wrapper
         :return:
         """
+
         self._get_pnls()
-        self._update_quantity()
 
     def _get_pnls(self, theoretical_=None):
         """
@@ -53,7 +50,11 @@ class PnL:
             self.theoretical_ = theoretical_
 
         # realize a position
-        if self._is_not_equal():
+
+        if self._is_equal():
+            self._increase()  # increase position
+
+        else:
             if abs(self._quantity) > abs(self._total_quantity):  # flip position
                 self._flip()
             elif abs(self._quantity) == abs(self._total_quantity):  # flatten position
@@ -61,41 +62,21 @@ class PnL:
             elif abs(self._quantity) < abs(self._total_quantity):  # decrease position
                 self._decrease()
 
-        elif self._is_equal():  # increase position
-            self._increase()
-
-    def get_total_pnl(self):
+    def total_pnl(self):
         """
         Returns total pnl for a product
         :return: float total pnl
         """
-        return self._realized + self._unrealized
+        return self.realized_pnl + self.unrealized_pnl
 
-    def _update_enter_price(self):
+    def _update_open_price(self):
         """
         updates the weighted entering price
         :return:
         """
-        self._enter = (self._old_enter_amount + self._quantity * self._market_price) / (
-                    self._old_enter_quantity + self._quantity)
-        self._old_enter_amount += self._quantity * self._market_price
-        self._old_enter_quantity += self._quantity
+        self._avg_open_price += (self._quantity / self._total_quantity) * (self._market_price - self._avg_open_price)
 
-    def _update_exit_price(self):
-        """
-        updates the weighted exit price
-        :return:
-        """
-        if self._old_exit_quantity + self._quantity == 0:
-            self._exit = 0
-        else:
-            self._exit = (self._old_exit_amount + self._quantity * self._market_price) / (
-                    self._old_exit_quantity + self._quantity)
-
-        self._old_exit_amount += self._quantity * self._market_price
-        self._old_exit_quantity += self._quantity
-
-    def _update_quantity(self):
+    def _update_total_quantity(self):
         """
         Updates the current total quantity of the product
         :return:
@@ -111,43 +92,49 @@ class PnL:
         """
         if (self._total_quantity == 0.0) and (self._quantity == 0.0):
             return
-        self._update_enter_price()
-        self._unrealized = (self.theoretical_ - self._enter) * (self._total_quantity + self._quantity)
+
+        self._update_total_quantity()
+        self._update_open_price()
+        self.unrealized_pnl = (self.theoretical_ - self._avg_open_price) * (self._total_quantity)
 
     def _decrease(self):
         """
         Updates exit price, realized and  unrealized pnl
         :return:
         """
-        self._update_exit_price()
-        self._realized = (self._exit - self._enter) * self._old_exit_quantity * (-1)
-        self._unrealized = (self.theoretical_ - self._enter) * (self._total_quantity + self._quantity)
+        self._update_total_quantity()
+        self.realized_pnl = self.realized_pnl + (self._market_price - self._avg_open_price) * self._quantity * (-1)
+        self.unrealized_pnl = (self.theoretical_ - self._avg_open_price) * (self._total_quantity)
 
     def _flatten(self):
         """
         Updates exit price, realized und resets state of some class variables
         :return:
         """
-        self._update_exit_price()
-        self._realized = (self._exit - self._enter) * self._old_exit_quantity * (-1)
+        self._update_total_quantity()
+        self.realized_pnl += (self._market_price - self._avg_open_price) * self._quantity * (-1)
 
-        self._old_enter_amount = 0.0
-        self._old_enter_quantity = 0.0
-        self._unrealized = 0.0
+        self._avg_open_price = 0.0
+        self._total_quantity = 0.0
+        self.unrealized_pnl = 0.0
 
     def _flip(self):
         """
         Flips position -
         :return:
         """
-        self._flatten()
-        self._increase()
+
+        self.realized_pnl += (self._market_price - self._avg_open_price) * self._total_quantity  # * (-1)
+        self._update_total_quantity()
+        self._avg_open_price = self._market_price
+
+        self.unrealized_pnl = (self.theoretical_ - self._avg_open_price) * (self._total_quantity)
 
     def sign(self, x_):
         """
         Helper to determine sign
         :param x_:
-        :return:
+        :return: -1 or 1
         """
         return math.copysign(1, x_)
 
@@ -156,55 +143,10 @@ class PnL:
         Checks whether quantities have same sign, special attention needs to be paid to the sign of 0
         :return: bool
         """
+        if self._total_quantity == 0:
+            self._total_quantity = self._total_quantity * self.sign(self._quantity)
+
         if self._quantity == 0.0:
             self._quantity = self.sign(self._total_quantity) * self._quantity
+
         return self.sign(self._quantity) == self.sign(self._total_quantity)
-
-    def _is_not_equal(self):
-        """
-        Checks whether quantities don't have the same sign
-        special attention needs to be paid to the sign of 0
-        :return: bool
-        """
-        if self._quantity == 0.0:
-            return False
-        else:
-            return self.sign(self._quantity) != self.sign(self._total_quantity)
-
-
-class SimplePnL:  # no cash, margin or fees
-    """
-    This is deprecated method of calculating pnl (NO Weighted average accounting)
-    """
-    def __init__(self):
-        self.total = 0
-        self.realized = 0
-        self.unrealized = 0
-        self.market_price = 0
-        self.enter = 0
-        self.long = False
-
-    def __push(self, x):
-        self.market_price = x
-        self.__update()
-
-    def __update(self):
-        if self.algorithm.position == 1:
-            if not self.long:
-                self.enter = self.market_price
-                self.long = True
-            else:
-                self.unrealized = self.market_price - self.enter
-
-        if self.algorithm.position == 0:
-            if self.long:
-                self.realized = self.market_price - self.enter
-                self.total += self.realized
-                self.unrealized = 0
-                self.enter = 0
-                self.long = False
-            else:
-                pass
-
-    def total_pnl(self):
-        return self.total + self.unrealized

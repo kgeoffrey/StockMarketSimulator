@@ -100,5 +100,4 @@ class PortfolioManager:
                 print("unknown trader type")
         else:
             return
-    
-        
+

@@ -48,7 +48,3 @@ class Chartist(Algorithms):
         if self.momentum.momentum() <= 0:
             print("sell")
             self.set_position(-0.3)
-    
-            
-
-    

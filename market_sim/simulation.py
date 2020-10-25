@@ -79,7 +79,7 @@ class Simulation(object):
     def create_dfs(self):
         pnls = {}
         for name in list(self.traders.keys()):
-            pnls[name] = self.traders[name].portfolio.pnl.get_total_pnl()
+            pnls[name] = self.traders[name].portfolio.pnl.total_pnl()
         self.pnl_df = pd.DataFrame(pnls.items(), columns=['Trader', 'PNL'])
         self.market_prices_df = pd.DataFrame(self.market_prices)
 
