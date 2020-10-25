@@ -92,7 +92,7 @@ app.layout = html.Div(
                                             ),
                                   dcc.Graph(id='bar',
                                             config={'displayModeBar': False},
-                                            animate=True,
+                                            animate=False,
                                             style={'height': '50%'},
                                             )
                               ]
